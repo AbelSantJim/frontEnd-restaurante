@@ -22,6 +22,23 @@ terminoBusqueda: string = '';
 platillosFiltrados: any[] = []; 
 numeroMesa: number = 0;
 
+paginaActual: number = 1;
+platillosPorPagina: number = 8;
+
+get platillosPaginados(): any[] {
+  const inicio = (this.paginaActual - 1) * this.platillosPorPagina;
+  return this.platillosFiltrados.slice(inicio, inicio + this.platillosPorPagina);
+}
+
+totalPaginas(): number {
+  return Math.ceil(this.platillosFiltrados.length / this.platillosPorPagina);
+}
+
+cambiarPagina(nuevaPagina: number): void {
+  if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas()) {
+    this.paginaActual = nuevaPagina;
+  }
+}
   nuevoPlatillo = {
     nombre: '',
     descripcion: '',
@@ -40,7 +57,7 @@ obtenerMesas(): void {
   const token = localStorage.getItem('token'); // o de donde guardes el token
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-  this.http.get<any[]>('http://172.20.10.2:8000/api/mesas/', { headers })
+  this.http.get<any[]>('http://127.0.0.1:8001/api/mesas/', { headers })
     .subscribe({
       next: datos => {
         this.mesas = datos;
@@ -52,7 +69,7 @@ obtenerMesas(): void {
 }
 
   obtenerPlatillos(): void {
-  this.http.get<any[]>('http://172.20.10.2:8000/api/API/productos/')
+  this.http.get<any[]>('http://127.0.0.1:8001/api/API/productos/')
     .subscribe({
       next: datos => {
         this.platillos = datos.map(p => ({ ...p, editando: false }));
@@ -64,9 +81,26 @@ obtenerMesas(): void {
       }
     });
 }
-  eliminarPlatillo(index: number){
+  editarPedido(index: number): void {
+  this.pedidos[index].editando = true;
+}
 
+guardarEdicion(index: number): void {
+  const pedido = this.pedidos[index];
+  if (pedido.cantidad < 1) {
+    alert('Cantidad no válida');
+    return;
   }
+  pedido.editando = false;
+}
+
+cancelarEdicion(index: number): void {
+  this.pedidos[index].editando = false;
+}
+
+eliminarPedido(index: number): void {
+  this.pedidos.splice(index, 1);
+}
   agregarPlatillo(id: number): void {
   const platillo = this.platillos.find(p => p.id === id);
 
@@ -81,22 +115,23 @@ obtenerMesas(): void {
     existente.cantidad += platillo.cantidad;
   } else {
     this.pedidos.push({
-      id: platillo.id,
-      nombre: platillo.nombre,
-      descripcion: platillo.descripcion,
-      precio: platillo.precio,
-      cantidad: platillo.cantidad
-    });
+  id: platillo.id,
+  nombre: platillo.nombre,
+  descripcion: platillo.descripcion,
+  precio: platillo.precio,
+  cantidad: platillo.cantidad,
+  editando: false
+});
   }
 
   platillo.cantidad = null;
 }
 
   filtrarPlatillos(): void {
-  const termino = this.terminoBusqueda.toLowerCase().trim();
   this.platillosFiltrados = this.platillos.filter(p =>
-    p.nombre.toLowerCase().includes(termino)
+    p.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
   );
+  this.paginaActual = 1; // Reiniciar a la primera página al buscar
 }
   
 
@@ -139,7 +174,7 @@ enviarPedido() {
     'Authorization': `Bearer ${token}`
   });
 
-  this.http.post('http://172.20.10.2:8000/api/pedidos/', pedido, { headers })
+  this.http.post('http://127.0.0.1:8001/api/pedidos/', pedido, { headers })
     .subscribe({
       next: (response) => {
         console.log('Pedido enviado con éxito:', response);

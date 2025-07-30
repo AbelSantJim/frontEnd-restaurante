@@ -26,7 +26,7 @@ ngOnInit(): void {
 }
 
 obtenerPlatillos(): void {
-this.http.get<any[]>('http://172.20.10.2:8000/api/API/productos/').subscribe((data: any[]) => {
+this.http.get<any[]>('http://127.0.0.1:8001/api/API/productos/').subscribe((data: any[]) => {
     this.platillos = data;
     this.filtrarPlatillos(); 
   });

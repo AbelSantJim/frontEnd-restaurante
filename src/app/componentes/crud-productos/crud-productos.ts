@@ -15,6 +15,28 @@ import { BarraNavegacion } from "../barra-navegacion/barra-navegacion";
 })
 export class CrudProductos implements OnInit {
 
+  paginaActual: number = 1;
+elementosPorPagina: number = 5;
+
+// Getter para obtener los platillos en la página actual
+get platillosPaginados() {
+  const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
+  const fin = inicio + this.elementosPorPagina;
+  return this.platillos.slice(inicio, fin);
+}
+
+// Devuelve el número total de páginas
+totalPaginas(): number {
+  return Math.ceil(this.platillos.length / this.elementosPorPagina);
+}
+
+// Cambiar de página
+cambiarPagina(pagina: number) {
+  if (pagina >= 1 && pagina <= this.totalPaginas()) {
+    this.paginaActual = pagina;
+  }
+}
+
   nuevoPlatillo = {
     nombre: '',
     descripcion: '',
@@ -33,7 +55,7 @@ export class CrudProductos implements OnInit {
   }
 
   obtenerPlatillos(): void {
-    this.http.get<any[]>('http://172.20.10.2:8000/api/API/productos/')
+    this.http.get<any[]>('http://127.0.0.1:8001/api/API/productos/')
       .subscribe({
         next: datos => {
           this.platillos = datos.map(p => ({ ...p, editando: false }));
@@ -59,8 +81,7 @@ export class CrudProductos implements OnInit {
     console.log('Enviando PUT a API con ID:', platillo.id);
     console.log('Datos enviados:', platillo);
     
-  
-    this.http.put(`http://172.20.10.2:8000/api/productos/${platillo.id}`, platillo, { headers }).subscribe({
+    this.http.put(`http://127.0.0.1:8001/api/productos/${platillo.id}`, platillo, { headers }).subscribe({
       next: () => {
         platillo.editando = false;
         this.cdRef.detectChanges();
@@ -77,7 +98,7 @@ export class CrudProductos implements OnInit {
     const headers = new HttpHeaders({
         'Authorization': `Bearer ${token}`
       });
-    this.http.delete(`http://172.20.10.2:8000/api/productos/${id}`, { headers }).subscribe({      next: () => {
+    this.http.delete(`http://127.0.0.1:8001/api/productos/${id}`, { headers }).subscribe({      next: () => {
          this.obtenerPlatillos();
       },
     error: err => {
@@ -93,7 +114,7 @@ export class CrudProductos implements OnInit {
       'Content-Type': 'application/json'
     };
     console.log('Enviando:', this.nuevoPlatillo);
-    this.http.post('http://172.20.10.2:8000/api/productos', this.nuevoPlatillo, { headers }).subscribe({
+    this.http.post('http://127.0.0.1:8001/api/productos', this.nuevoPlatillo, { headers }).subscribe({
       next: (res) => {
         console.log('Platillo creado:', res);
         this.obtenerPlatillos(); 

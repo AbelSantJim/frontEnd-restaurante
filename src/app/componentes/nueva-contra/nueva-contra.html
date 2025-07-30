@@ -1,0 +1,76 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<section class="bienvenida-container">
+  <div class="banner-container">
+    <div class="login-container">
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <h2 class="text-center mb-4">Recuperacion de contraseña</h2>
+      <div class="mb-3">
+          <label for="email" class="form-label">Correo electrónico</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            placeholder="ejemplo@correo.com"
+            required
+            name="email"
+            [(ngModel)]="email"
+          />
+        </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Token</label>
+        <input
+          type="password"
+          class="form-control"
+          id="token"
+          placeholder="token"
+          required
+          name="token"
+          [(ngModel)]="token"
+        />
+      </div>
+    <div class="mb-3">
+  <label for="password" class="form-label">Nueva Contraseña</label>
+  <div class="input-group">
+    <input
+      [type]="passwordVisible ? 'text' : 'password'"
+      class="form-control"
+      id="password"
+      placeholder="Contraseña"
+      required
+      name="password"
+      [(ngModel)]="password"
+    />
+<button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()" tabindex="-1" aria-label="Mostrar/ocultar contraseña">
+  <i [class.bi-eye]="!passwordVisible" [class.bi-eye-slash]="passwordVisible"></i>
+</button>
+  
+
+  </div>
+
+  <label for="passwordConfirmar" class="form-label">Confirmar Nueva Contraseña</label>
+  <div class="input-group">
+    <input
+      [type]="passwordVisible ? 'text' : 'password'"
+      class="form-control"
+      id="passwordConfirmar"
+      placeholder="Confirmar Contraseña"
+      required
+      name="passwordConfirmar"
+      [(ngModel)]="passwordConfirmar"
+    />
+<button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()" tabindex="-1" aria-label="Mostrar/ocultar contraseña">
+  <i [class.bi-eye]="!passwordVisible" [class.bi-eye-slash]="passwordVisible"></i>
+</button>
+  
+
+  </div>
+  
+</div>
+      <button type="submit" class="btn btn-primary w-100">Solicitar nueva Contraseña</button>
+    </form>
+    </div>
+  </div>
+</section>

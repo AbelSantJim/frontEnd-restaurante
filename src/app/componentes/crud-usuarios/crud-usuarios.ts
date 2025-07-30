@@ -27,6 +27,28 @@ interface Usuario {
 })
 export class CrudUsuarios implements OnInit {
 
+  paginaActualUsuarios: number = 1;
+elementosPorPaginaUsuarios: number = 5;
+
+// Getter para obtener los usuarios paginados
+get usuariosPaginados() {
+  const inicio = (this.paginaActualUsuarios - 1) * this.elementosPorPaginaUsuarios;
+  const fin = inicio + this.elementosPorPaginaUsuarios;
+  return this.usuarios.slice(inicio, fin);
+}
+
+// Total de páginas
+totalPaginasUsuarios(): number {
+  return Math.ceil(this.usuarios.length / this.elementosPorPaginaUsuarios);
+}
+
+// Cambiar página
+cambiarPaginaUsuarios(pagina: number) {
+  if (pagina >= 1 && pagina <= this.totalPaginasUsuarios()) {
+    this.paginaActualUsuarios = pagina;
+  }
+}
+
   usuarios: Usuario[] = [];
   copiaUsuarios: any = {}; 
 
@@ -49,7 +71,7 @@ export class CrudUsuarios implements OnInit {
   const token = localStorage.getItem('token');
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-  this.http.get<any>('http://172.20.10.2:8000/api/usuarios/', { headers }) 
+  this.http.get<any>('http://127.0.0.1:8001/api/usuarios/', { headers }) 
       .subscribe({
         next: (response) => {
           this.usuarios = response.data.map((u: Usuario) => ({ ...u, editando: false }));
@@ -76,7 +98,7 @@ export class CrudUsuarios implements OnInit {
     password: this.nuevoEmpleado.password
   };
 
-  this.http.post<any>('http://172.20.10.2:8000/api/usuarios/', empleadoData, { headers })
+  this.http.post<any>('http://127.0.0.1:8001/api/usuarios/', empleadoData, { headers })
     .subscribe({
       next: response => {
         console.log('Empleado creado:', response);
@@ -102,7 +124,7 @@ export class CrudUsuarios implements OnInit {
   guardarUsuario(usuario: any) {
     const token = localStorage.getItem('token');
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  this.http.put(`http://172.20.10.2:8000/api/usuarios/${usuario.id}`, usuario, { headers })      .subscribe({
+  this.http.put(`http://127.0.0.1:8001/api/usuarios/${usuario.id}`, usuario, { headers })      .subscribe({
         next: () => {
           usuario.editando = false;
           delete this.copiaUsuarios[usuario.id];
@@ -116,7 +138,7 @@ export class CrudUsuarios implements OnInit {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    this.http.delete(`http://172.20.10.2:8000/api/usuarios/${id}`, { headers })
+    this.http.delete(`http://127.0.0.1:8001/api/usuarios/${id}`, { headers })
       .subscribe({
         next: () => {
           this.usuarios = this.usuarios.filter(u => u.id !== id);

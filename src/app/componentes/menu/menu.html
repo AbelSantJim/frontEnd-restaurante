@@ -21,7 +21,7 @@
         <div class="row">
             <div class="col-md-4 mb-4" *ngFor="let platillo of paginatedPlatillos">
             <div class="card h-100">
-                <img [src]="'http://10.168.97.104:8000' + platillo.imagen_url" class="card-img-top cartaAlimento" [alt]="platillo.nombre" style="max-width: 500px; max-height: 220px;">
+                <img [src]="'http://127.0.0.1:8001/' + platillo.imagen_url" class="card-img-top cartaAlimento" [alt]="platillo.nombre" style="max-width: 500px; max-height: 220px;">
                     <div class="card-body">
                         <h5 class="card-title">{{ platillo.nombre }}</h5>
                         <p class="card-text">{{ platillo.descripcion }}</p>

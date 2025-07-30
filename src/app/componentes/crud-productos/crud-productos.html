@@ -51,7 +51,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let platillo of platillos; let i = index">
+            <tr *ngFor="let platillo of platillosPaginados; let i = index">
                 <td>{{ platillo.id }}</td>
     
                 <!-- Nombre -->
@@ -80,6 +80,24 @@
             </tr>
         </tbody>
     </table>
+    <nav class="d-flex justify-content-center mt-3">
+  <ul class="pagination">
+    <li class="page-item" [class.disabled]="paginaActual === 1">
+      <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
+    </li>
+
+    <li 
+      class="page-item" 
+      *ngFor="let pagina of [].constructor(totalPaginas()); let i = index" 
+      [class.active]="paginaActual === i + 1">
+      <button class="page-link" (click)="cambiarPagina(i + 1)">{{ i + 1 }}</button>
+    </li>
+
+    <li class="page-item" [class.disabled]="paginaActual === totalPaginas()">
+      <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
+    </li>
+  </ul>
+</nav>
 </div>  
 
 </section>

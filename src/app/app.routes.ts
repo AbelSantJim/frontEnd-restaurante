@@ -11,6 +11,7 @@ import { AcercaDe } from './componentes/acerca-de/acerca-de';
 import { AdministracionOrdenes } from './componentes/administracion-ordenes/administracion-ordenes';
 import { FormularioPago } from './componentes/formulario-pago/formulario-pago';
 import { RecuperarContrasena } from './componentes/recuperar-contrasena/recuperar-contrasena';
+import { NuevaContra } from './componentes/nueva-contra/nueva-contra';
 
 export const routes: Routes = [
     {
@@ -57,5 +58,9 @@ export const routes: Routes = [
     {
         path: 'recuperar',
         component: RecuperarContrasena,
+    },
+    {
+        path: 'nuevaCon',
+        component: NuevaContra,
     },
 ];

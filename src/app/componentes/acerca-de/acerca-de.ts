@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-acerca-de',
-  imports: [BarraNavegacion],
+  imports: [],
   templateUrl: './acerca-de.html',
   styleUrl: './acerca-de.css'
 })

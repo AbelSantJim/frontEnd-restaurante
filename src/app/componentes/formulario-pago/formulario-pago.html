@@ -25,9 +25,20 @@
 
           <!-- Nombre del tarjetahabiente -->
           <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre del tarjetahabiente</label>
-            <input type="text" class="form-control" id="nombre" placeholder="Nombre completo" required />
-          </div>
+  <label for="nombre" class="form-label">Nombre del tarjetahabiente</label>
+  <input
+    type="text"
+    class="form-control"
+    id="nombre"
+    name="nombre"
+    [(ngModel)]="nombre"
+    placeholder="Nombre completo"
+    maxlength="45"
+    required
+    pattern="[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+"
+    title="Solo letras y espacios (máximo 45 caracteres)"
+  />
+</div>
 
           <!-- CVV -->
           <div class="mb-3">
@@ -51,10 +62,42 @@
             </div>
           </div>
 
+          <div class="mb-3">
+  <label class="form-label">¿Cómo desea recibir su ticket?</label>
+
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="metodo"
+      id="correo"
+      [(ngModel)]="metodoEnvio"
+      value="correo"
+    />
+    <label class="form-check-label" for="correo">Enviar al correo</label>
+  </div>
+
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="metodo"
+      id="imprimir"
+      [(ngModel)]="metodoEnvio"
+      value="imprimir"
+    />
+    <label class="form-check-label" for="impresion">Imprimir</label>
+  </div>
+</div>
+
           <!-- Botón de pago -->
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Pagar</button>
-          </div>
+          <button
+  type="submit"
+  class="btn btn-primary"
+  [disabled]="!metodoEnvio"
+>
+  Pagar
+</button>
         </form>
       </div>
     </div>

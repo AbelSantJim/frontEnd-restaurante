@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-recuperar-contrasena',
   imports: [FormsModule, CommonModule,HttpClientModule, RouterModule],
@@ -22,18 +23,28 @@ export class RecuperarContrasena {
     this.passwordVisible = !this.passwordVisible; 
   }
   onSubmit() {
-       const payload = { email: this.email };
+  const payload = { email: this.email };
+  console.log('Enviando:', payload);
 
-    this.http.post('http://172.20.10.2:8000/api/password/email/', payload).subscribe({
-      next: response => {
-        alert('📨 Se ha enviado un correo de recuperación. Revisa tu bandeja de entrada.');
-        console.log('Respuesta:', response);
-      },
-      error: error => {
-        alert('❌ No se pudo enviar el correo. Verifica el email ingresado.');
-        console.error('Error:', error);
+  this.http.post('http://127.0.0.1:8001/api/password/email', payload).subscribe({
+    next: response => {
+      alert('Correo enviado con éxito. Revise su bandeja de entrada.');
+      this.router.navigate(['/nuevaCon']); // ruta que quieras mostrar
+      console.log('Respuesta:', response);
+    },
+    error: error => {
+      // Si es error de validación (Laravel responde con código 422)
+      if (error.status === 422) {
+        const mensaje = error.error?.errors?.email?.[0] || 'Error de validación.';
+        alert(`Error: ${mensaje}`);
+      } else {
+        // Otros errores (500, etc.)
+        alert('Error del servidor. Inténtalo más tarde.');
       }
-    });
-  }
+
+      console.error('Error:', error);
+    }
+  });
+}
 
 }

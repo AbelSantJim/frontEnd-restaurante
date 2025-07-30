@@ -1,0 +1,24 @@
+.login-container {
+  background-color: rgba(255, 192, 203, 0.9); /* rosa semitransparente */
+  padding: 25px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-sizing: border-box;
+}
+.banner-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-image: url("../../../assets/imagenes/restauranteBackground.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+

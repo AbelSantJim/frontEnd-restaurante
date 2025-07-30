@@ -15,6 +15,7 @@ import { ChangeDetectorRef } from '@angular/core';
 export class Login {
   email: string = '';
   password: string = '';
+  
   passwordVisible = false;
 
   togglePasswordVisibility() {
@@ -28,7 +29,7 @@ export class Login {
         password: this.password
       };
 
-      this.http.post<any>('http://172.20.10.2:8000/api/login/', payload).subscribe({
+      this.http.post<any>('http://127.0.0.1:8001/api/login/', payload).subscribe({
         next: (res) => {
           
           localStorage.setItem('token', res.token);
