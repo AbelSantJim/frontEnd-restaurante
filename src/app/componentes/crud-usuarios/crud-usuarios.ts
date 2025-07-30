@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpHeaders } from '@angular/common/http';
 import { BarraNavegacion } from "../barra-navegacion/barra-navegacion";
 
+  stringIp  : "http://127.0.0.1:8001/api";
 interface Usuario {
   id: number;
   name: string;
@@ -71,7 +72,7 @@ cambiarPaginaUsuarios(pagina: number) {
   const token = localStorage.getItem('token');
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-  this.http.get<any>('http://127.0.0.1:8001/api/usuarios/', { headers }) 
+  this.http.get<any>('stringIp/', { headers }) 
       .subscribe({
         next: (response) => {
           this.usuarios = response.data.map((u: Usuario) => ({ ...u, editando: false }));
@@ -98,7 +99,7 @@ cambiarPaginaUsuarios(pagina: number) {
     password: this.nuevoEmpleado.password
   };
 
-  this.http.post<any>('http://127.0.0.1:8001/api/usuarios/', empleadoData, { headers })
+  this.http.post<any>('stringIp/api/usuarios/', empleadoData, { headers })
     .subscribe({
       next: response => {
         console.log('Empleado creado:', response);
@@ -124,7 +125,7 @@ cambiarPaginaUsuarios(pagina: number) {
   guardarUsuario(usuario: any) {
     const token = localStorage.getItem('token');
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  this.http.put(`http://127.0.0.1:8001/api/usuarios/${usuario.id}`, usuario, { headers })      .subscribe({
+  this.http.put(`stringIp/usuarios/${usuario.id}`, usuario, { headers })      .subscribe({
         next: () => {
           usuario.editando = false;
           delete this.copiaUsuarios[usuario.id];
