@@ -30,6 +30,9 @@ import { ActivatedRoute } from '@angular/router'; // Descomentar si vas a obtene
   styleUrl: './formulario-pago.css'
 })
 export class FormularioPago {
+  cvv: string = '';
+mesExpiracion: string = '';
+anioExpiracion: string = '';
   metodoEnvio: string = '';
   meses = [
     { value: '01', name: '01 - Ene' },
@@ -45,7 +48,7 @@ export class FormularioPago {
     { value: '11', name: '11 - Nov' },
     { value: '12', name: '12 - Dic' },
   ];
-
+correoCliente: string = '';
   anios: number[] = [];
   numeroTarjeta = ''; // Usado con ngModel en el HTML para el campo del número de tarjeta
 
@@ -105,12 +108,12 @@ export class FormularioPago {
   console.log(this.metodoEnvio);
   // FLUJO SEGÚN EL MÉTODO DE ENVÍO
   if (this.metodoEnvio === 'imprimir') {
-    const body = {
+     const body = {
       estado: 'pagado',
       metodo_envio_ticket: 'descargar'
     };
 
-    this.http.put(`http://127.0.0.1:8001/api/pedidos/${this.pedidoId}`, body, {
+    this.http.put(`https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/pedidos/${this.pedidoId}`, body, {
       headers: headers,
       observe: 'response',
       responseType: 'blob'
@@ -139,12 +142,12 @@ export class FormularioPago {
     // Envío por correo
     
     const body = {
-      estado: 'pagado',
-      metodo_envio_ticket: 'email',
-      cliente_email: 'cliente@ejemplo.com'  // Puedes remplazar por una propiedad dinámica si la tienes
-    };
+  estado: 'pagado',
+  metodo_envio_ticket: 'email',
+  cliente_email: this.correoCliente
+};
 
-    this.http.put(`http://127.0.0.1:8001/api/pedidos/${this.pedidoId}`, body, {
+    this.http.put(`https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/pedidos/${this.pedidoId}`, body, {
       headers: headers
     }).subscribe({
       next: (response) => {
@@ -179,4 +182,14 @@ export class FormularioPago {
     this.numeroTarjeta = valor; // Actualiza la propiedad del componente (para ngModel)
     input.value = valor;       // Actualiza el valor directamente en el input (para la vista inmediata)
   }
+
+  formularioValido(): boolean {
+  return (
+    this.numeroTarjeta.replace(/\s/g, '').length === 16 &&
+    /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]{1,45}$/.test(this.nombre) &&
+    /^\d{3,4}$/.test(this.cvv) &&
+    this.mesExpiracion !== '' &&
+    this.anioExpiracion !== ''
+  );
+}
 }

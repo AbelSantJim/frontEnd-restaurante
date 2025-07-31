@@ -40,3 +40,26 @@ label{
   color:white;
   background-color: black;
 }
+.radio-group {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.radio-option {
+  background-color: beige;
+  color: black;
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.radio-option:hover {
+  background-color: #e6dcc6;
+}
+
+.radio-option input[type="radio"] {
+  margin-right: 8px;
+}

@@ -12,6 +12,60 @@
     <div class="banner-container">
  
   <h2 class="mb-4 text-center titulo">Tabla de empleados</h2>
+  <div class="mb-3 text-center">
+  <input
+    type="text"
+    class="form-control w-50 mx-auto"
+    placeholder="Buscar usuarios por nombre..."
+    [(ngModel)]="terminoBusqueda"
+    (input)="filtrarUsuarios()"
+  />
+</div>
+  <div class="radio-group">
+  <label class="radio-option">
+    <input
+      type="radio"
+      name="filtroRol"
+      [(ngModel)]="filtroRol"
+      value="admin"
+      (change)="filtrarUsuariosPorRol()"
+    />
+    Ver admin
+  </label>
+
+  <label class="radio-option">
+    <input
+      type="radio"
+      name="filtroRol"
+      [(ngModel)]="filtroRol"
+      value="mesero"
+      (change)="filtrarUsuariosPorRol()"
+    />
+    Ver mesero
+  </label>
+
+  <label class="radio-option">
+    <input
+      type="radio"
+      name="filtroRol"
+      [(ngModel)]="filtroRol"
+      value="comensal"
+      (change)="filtrarUsuariosPorRol()"
+    />
+    Ver comensal
+  </label>
+
+  <label class="radio-option">
+    <input
+      type="radio"
+      name="filtroRol"
+      [(ngModel)]="filtroRol"
+      value=""
+      (change)="filtrarUsuariosPorRol()"
+    />
+    Ver todos
+  </label>
+</div>
   <form *ngIf="mostrarFormulario" (ngSubmit)="crearEmpleado()" #formEmpleado="ngForm" class="mt-3">
   <div class="mb-2">
     <label>Nombre:</label>
@@ -67,10 +121,16 @@
     </td>
 
     <!-- Rol -->
-    <td *ngIf="!usuario.editando">{{ usuario.role }}</td>
+    <td *ngIf="!usuario.editando">
+  {{ usuario.roles.length > 0 ? usuario.roles.join(', ') : 'Sin rol' }}
+</td>
     <td *ngIf="usuario.editando">
-      <input [(ngModel)]="usuario.role" class="form-control form-control-sm" />
-    </td>
+  <select [(ngModel)]="usuario.roles" class="form-control form-control-sm">
+    <option value="admin">Administrador</option>
+    <option value="comensal">Comensal</option>
+    <option value="mesero">Mesero</option>
+  </select>
+</td>
 
     <!-- Acciones -->
     <td>

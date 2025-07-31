@@ -13,8 +13,16 @@
         
             <h2 class="mb-4 text-center">Tabla de Menú</h2>
   
-  <!-- Formulario para nuevo platillo -->
-
+  <!-- buscador -->
+<div class="mb-3 text-center">
+  <input
+    type="text"
+    class="form-control w-50 mx-auto"
+    placeholder="Buscar platillo por nombre..."
+    [(ngModel)]="terminoBusqueda"
+    (input)="filtrarPlatillos()"
+  />
+</div>
   <!-- Formulario para nuevo platillo -->
   <div *ngIf="mostrarFormulario" class="mb-4">
     <h5>Agregar nuevo platillo</h5>

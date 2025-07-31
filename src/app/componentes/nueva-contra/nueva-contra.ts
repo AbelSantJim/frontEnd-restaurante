@@ -38,7 +38,7 @@ export class NuevaContra {
       password_confirmation: this.passwordConfirmar, // clave exacta que Laravel espera
     };
 
-    this.http.post('http://127.0.0.1:8001/api/password/reset', payload)
+    this.http.post('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/password/reset', payload)
       .subscribe({
         next: (response: any) => {
           alert(response.message || 'Contraseña actualizada con éxito');

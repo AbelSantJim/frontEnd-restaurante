@@ -23,10 +23,12 @@ totalPages: number = 0;
 
 ngOnInit(): void {
   this.obtenerPlatillos();
+  
 }
 
 obtenerPlatillos(): void {
-this.http.get<any[]>('http://127.0.0.1:8001/api/API/productos/').subscribe((data: any[]) => {
+this.http.get<any[]>('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/API/productos').subscribe((data: any[]) => {
+  
     this.platillos = data;
     this.filtrarPlatillos(); 
   });

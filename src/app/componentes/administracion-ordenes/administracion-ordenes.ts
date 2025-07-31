@@ -13,7 +13,8 @@ import { Router } from '@angular/router';
   styleUrl: './administracion-ordenes.css'
 })
 export class AdministracionOrdenes implements OnInit {
-
+  filtroEstado: string = '';
+  pedidosFiltrados: any[] = [];
   pedidos: any[] = [];
   paginatedPedidos: any[] = [];
   currentPage: number = 1;
@@ -33,12 +34,11 @@ export class AdministracionOrdenes implements OnInit {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    this.http.get<any[]>('http://127.0.0.1:8001/api/pedidos', { headers })
+    this.http.get<any[]>('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/pedidos', { headers })
       .subscribe({
         next: (data) => {
           this.pedidos = data;
-          this.totalPages = Math.ceil(this.pedidos.length / this.itemsPerPage);
-          this.updatePaginatedPedidos();
+          this.filtrarPedidos(); 
         },
         error: (err) => {
           console.error('Error al obtener pedidos:', err);
@@ -46,10 +46,22 @@ export class AdministracionOrdenes implements OnInit {
       });
   }
 
+  filtrarPedidos() {
+  if (!this.filtroEstado) {
+    this.pedidosFiltrados = [...this.pedidos];
+  } else {
+    this.pedidosFiltrados = this.pedidos.filter(p => p.estado === this.filtroEstado);
+  }
+  this.currentPage = 1;
+  this.totalPages = Math.ceil(this.pedidosFiltrados.length / this.itemsPerPage);
+  this.updatePaginatedPedidos();
+}
+
+
   updatePaginatedPedidos() {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    this.paginatedPedidos = this.pedidos.slice(start, end);
+  const start = (this.currentPage - 1) * this.itemsPerPage;
+  const end = start + this.itemsPerPage;
+  this.paginatedPedidos = this.pedidosFiltrados.slice(start, end);
   }
 
   cambiarPagina(nuevaPagina: number) {
@@ -80,7 +92,7 @@ export class AdministracionOrdenes implements OnInit {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       };
-      this.http.put(`http://127.0.0.1:8001/api/pedidos/${pedido.id}`, 
+      this.http.put(`https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/pedidos/${pedido.id}`, 
         { estado: 'entregado' }, 
         { headers }
       ).subscribe({
@@ -97,7 +109,7 @@ export class AdministracionOrdenes implements OnInit {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       };
-      this.http.put(`http://127.0.0.1:8001/api/mesas/${pedido.mesa_id}`, 
+      this.http.put(`https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/mesas/${pedido.mesa_id}`, 
         { estado: 'disponible' }, 
         { headers }
       ).subscribe({
@@ -113,4 +125,5 @@ export class AdministracionOrdenes implements OnInit {
       // lógica de cancelación
     }
   }
+  
 }

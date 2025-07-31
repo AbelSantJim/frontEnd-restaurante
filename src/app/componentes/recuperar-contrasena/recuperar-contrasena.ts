@@ -26,7 +26,7 @@ export class RecuperarContrasena {
   const payload = { email: this.email };
   console.log('Enviando:', payload);
 
-  this.http.post('http://127.0.0.1:8001/api/password/email', payload).subscribe({
+  this.http.post('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/password/email', payload).subscribe({
     next: response => {
       alert('Correo enviado con éxito. Revise su bandeja de entrada.');
       this.router.navigate(['/nuevaCon']); // ruta que quieras mostrar

@@ -1,136 +1,130 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<!--Barra de navegacion-->
-
+<!-- Barra de navegación -->
 <app-barra-navegacion></app-barra-navegacion>
 
-<!--Tabla-->
-<section class="bienvenida-container">
-    <div class="banner-container">
-  <!--Tabla de datos del menu-->
-      
-  <!--Buscado de menu-->
-        <h1>Tasca Don Quino</h1>
-        <h2>Pedidos</h2>
-        <!-- Resumen del Pedido (solo mitad del ancho) -->
-<!-- Contenedor centrado y separado -->
-<div class="d-flex justify-content-center mb-3">
-  <div class="accordion w-50 mx-auto">
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button class="accordion-button" type="button" (click)="mostrarResumen = !mostrarResumen">
-          Resumen del Pedido
-        </button>
-      </h2>
-      <div class="accordion-collapse collapse show" *ngIf="mostrarResumen">
-        <div class="accordion-body">
-          <ul class="list-group">
-  <li *ngFor="let p of pedidos; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-    <div *ngIf="!p.editando">
-      {{ p.nombre }} x{{ p.cantidad }} - ${{ p.precio * p.cantidad }}
-      <button class="btn btn-sm btn-warning ms-2" (click)="editarPedido(i)">Editar</button>
-      <button class="btn btn-sm btn-danger ms-2" (click)="eliminarPedido(i)">Eliminar</button>
+<div class="banner-container "> 
+  <!-- Título -->
+  <div class=" text-center text-white mb-4">
+    <h1>Tasca Don Quino</h1>
+    <h2>Pedidos</h2>
+  </div>
+
+  <!-- Selección de mesa -->
+  <div class="mb-3 d-flex justify-content-center align-items-center">
+    <label for="mesa" class="btn btn-primary fs-2 me-2 no-hover">Seleccione una mesa:</label>
+    <select id="mesa" [(ngModel)]="numeroMesa" class="form-select w-auto">
+      <option value="" disabled selected>Seleccione</option>
+      <option *ngFor="let mesa of mesas" [value]="mesa.id">
+        {{ mesa.id }} {{ mesa.estado }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Buscador y botón "Visualizar pedido" -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6 d-flex">
+      <input type="text" class="form-control me-2" placeholder="Buscar platillo por nombre"
+             [(ngModel)]="terminoBusqueda" (input)="filtrarPlatillos()">
+      <button class="btn btn-primary" (click)="mostrarResumen = !mostrarResumen">
+        Visualizar Pedido
+      </button>
     </div>
-    <div *ngIf="p.editando" class="d-flex align-items-center">
-      <label class="me-2">Cantidad:</label>
-      <input type="number" [(ngModel)]="p.cantidad" min="1" class="form-control form-control-sm me-2" style="width: 80px;">
-      <button class="btn btn-sm btn-success me-2" (click)="guardarEdicion(i)">Guardar</button>
-      <button class="btn btn-sm btn-secondary" (click)="cancelarEdicion(i)">Cancelar</button>
-    </div>
-  </li>
-</ul>
-          <p><strong>Total:</strong> ${{ obtenerTotal() }}</p>
-          <button class="btn btn-sm btn-success me-2" (click)="enviarPedido()">Enviar a cocina</button>
+  </div>
+
+  <!-- Resumen del pedido -->
+  <div class="row justify-content-center mb-4" *ngIf="mostrarResumen">
+    <div class="col-md-8">
+      <div class="accordion" id="pedidoAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#resumenPedido">
+              Resumen del Pedido
+            </button>
+          </h2>
+          <div id="resumenPedido" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+              <ul class="list-group">
+                <li *ngFor="let p of pedidos; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+                  <div *ngIf="!p.editando">
+                    {{ p.nombre }} x{{ p.cantidad }} - ${{ p.precio * p.cantidad }}
+                    <button class="btn btn-sm btn-warning ms-2" (click)="editarPedido(i)">Editar</button>
+                    <button class="btn btn-sm btn-danger ms-2" (click)="eliminarPedido(i)">Eliminar</button>
+                  </div>
+                  <div *ngIf="p.editando" class="d-flex align-items-center">
+                    <label class="me-2">Cantidad:</label>
+                    <input type="number" [(ngModel)]="p.cantidad" min="1" class="form-control form-control-sm me-2" style="width: 80px;">
+                    <button class="btn btn-sm btn-success me-2" (click)="guardarEdicion(i)">Guardar</button>
+                    <button class="btn btn-sm btn-secondary" (click)="cancelarEdicion(i)">Cancelar</button>
+                  </div>
+                </li>
+              </ul>
+              <p class="mt-3"><strong>Total:</strong> ${{ obtenerTotal() }}</p>
+              <button class="btn btn-success" (click)="enviarPedido()">Enviar a cocina</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-
-
-
-        <div class="mb-4 d-flex justify-content-center">
-          
-            <input type="text" class="form-control w-50" placeholder="Buscar platillo por nombre"
-            [(ngModel)]="terminoBusqueda" (input)="filtrarPlatillos()">
-          
-          <button class="btn btn-primary" (click)="mostrarResumen = !mostrarResumen">
-          Visualizar Pedido
-</button>            
-        </div>
-
-        <div class="mb-3 d-flex justify-content-center align-items-center">
-  <label for="mesa" style="color:white; margin-right: 10px;">Mesa:</label>
-  <select id="mesa" [(ngModel)]="numeroMesa" class="form-select w-auto">
-    <option value="" disabled selected>Seleccione</option>
-    <option *ngFor="let mesa of mesas" [value]="mesa.id">
-      {{ mesa.id }} {{ mesa.estado }}
-    </option>
-  </select>
-</div>
-
-    <div class="table-responsive">
-  <table class="table table-striped table-bordered table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio ind.</th>
-                <th>Cantidad</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let platillo of platillosPaginados; let i = index">
-                <td>{{ platillo.id }}</td>
-    
-                <!-- Nombre -->
-                <td>
-                    <input *ngIf="platillo.editando" [(ngModel)]="platillo.nombre" class="form-control"/>
-                    <span *ngIf="!platillo.editando">{{ platillo.nombre }}</span>
-                </td>
-    
-                <!-- Descripción -->
-                <td>
-                    <input *ngIf="platillo.editando" [(ngModel)]="platillo.descripcion" class="form-control"/>
-                    <span *ngIf="!platillo.editando">{{ platillo.descripcion }}</span>
-                </td>
-    
-                <!-- Precio -->
-                <td>
-                    <input *ngIf="platillo.editando" [(ngModel)]="platillo.precio" class="form-control"/>
-                    <span *ngIf="!platillo.editando">{{ platillo.precio }}</span>
-                </td>
-                <td>
-                    <input type="number" placeholder="0" class="form-control" [(ngModel)]="platillo.cantidad" min="1">
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-success me-2" (click)="agregarPlatillo(platillo.id)">Agregar</button>
-                </td>
-            </tr>
-        </tbody>
+  <!-- Tabla de platillos -->
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Precio ind.</th>
+          <th>Cantidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let platillo of platillosPaginados; let i = index">
+          <td>{{ platillo.id }}</td>
+          <td>
+            <input *ngIf="platillo.editando" [(ngModel)]="platillo.nombre" class="form-control" />
+            <span *ngIf="!platillo.editando">{{ platillo.nombre }}</span>
+          </td>
+          <td>
+            <input *ngIf="platillo.editando" [(ngModel)]="platillo.descripcion" class="form-control" />
+            <span *ngIf="!platillo.editando">{{ platillo.descripcion }}</span>
+          </td>
+          <td>
+            <input *ngIf="platillo.editando" [(ngModel)]="platillo.precio" class="form-control" />
+            <span *ngIf="!platillo.editando">{{ platillo.precio }}</span>
+          </td>
+          <td>
+            <input type="number" placeholder="0" class="form-control" [(ngModel)]="platillo.cantidad" min="1">
+          </td>
+          <td>
+            <button 
+              (click)="agregarPlatillo(platillo.id)" 
+              class="btn btn-primary" 
+              [disabled]="numeroMesa <= 0">
+              Agregar
+              </button>
+          </td>
+        </tr>
+      </tbody>
     </table>
-    <nav class="d-flex justify-content-center mt-3">
-  <ul class="pagination">
-    <li class="page-item" [class.disabled]="paginaActual === 1">
-      <a class="page-link" href="javascript:void(0)"  (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
-    </li>
+  </div>
 
-    <li 
-      class="page-item" 
-      *ngFor="let pagina of [].constructor(totalPaginas()); let i = index" 
-      [class.active]="paginaActual === i + 1">
-      <a class="page-link" href="javascript:void(0)"  (click)="cambiarPagina(i + 1)">{{ i + 1 }}</a>
-    </li>
+  <!-- Paginación -->
+  <nav class="d-flex justify-content-center mt-3">
+    <ul class="pagination">
+      <li class="page-item" [class.disabled]="paginaActual === 1">
+        <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
+      </li>
 
-    <li class="page-item" [class.disabled]="paginaActual === totalPaginas()">
-      <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
-    </li>
-  </ul>
-</nav>
-    </div>
-</div>  
+      <li class="page-item" *ngFor="let pagina of [].constructor(totalPaginas()); let i = index"
+          [class.active]="paginaActual === i + 1">
+        <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(i + 1)">{{ i + 1 }}</a>
+      </li>
+
+      <li class="page-item" [class.disabled]="paginaActual === totalPaginas()">
+        <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
+      </li>
+    </ul>
+  </nav>
+</div>

@@ -27,7 +27,7 @@ export class BarraNavegacion implements OnInit{
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    this.http.post('http://127.0.0.1:8001/api/logout', {}, { headers })
+    this.http.post('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/logout', {}, { headers })
       .subscribe({
         next: () => {
           console.log('Sesión cerrada correctamente.');

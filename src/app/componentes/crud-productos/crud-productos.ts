@@ -14,7 +14,8 @@ import { BarraNavegacion } from "../barra-navegacion/barra-navegacion";
   styleUrl: './crud-productos.css'
 })
 export class CrudProductos implements OnInit {
-
+terminoBusqueda: string = '';
+todosLosPlatillos: any[] = [];
   paginaActual: number = 1;
 elementosPorPagina: number = 5;
 
@@ -55,23 +56,42 @@ cambiarPagina(pagina: number) {
   }
 
   obtenerPlatillos(): void {
-    this.http.get<any[]>('http://127.0.0.1:8001/api/API/productos/')
-      .subscribe({
-        next: datos => {
-          this.platillos = datos.map(p => ({ ...p, editando: false }));
-          this.cdRef.detectChanges();
-        },
-        error: err => {
-          console.error('Error al cargar los platillos:', err);
-        }
-      });
+  this.http.get<any[]>('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/API/productos')
+    .subscribe({
+      next: datos => {
+        this.todosLosPlatillos = datos.map(p => ({ ...p, editando: false }));
+        this.platillos = [...this.todosLosPlatillos]; // copia inicial
+        this.cdRef.detectChanges();
+      },
+      error: err => {
+        console.error('Error al cargar los platillos:', err);
+      }
+    });
+}
+  filtrarPlatillos(): void {
+  const termino = this.terminoBusqueda.trim().toLowerCase();
+
+  if (!termino) {
+    this.platillos = [...this.todosLosPlatillos];
+  } else {
+    this.platillos = this.todosLosPlatillos.filter(p =>
+      p.nombre.toLowerCase().includes(termino)
+    );
   }
 
+  // Reiniciar paginación al inicio
+  this.paginaActual = 1;
+}
   editarPlatillo(index: number): void {
+    
     this.platillos[index].editando = true;
   }
 
   guardarPlatillo(index: number): void {
+    const confirmar = confirm("¿Estás seguro que desea guardar los datos?");
+  if (!confirmar) {
+    return; // Cancelar si el usuario no confirma
+  }
     const platillo = this.platillos[index];
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
@@ -81,7 +101,7 @@ cambiarPagina(pagina: number) {
     console.log('Enviando PUT a API con ID:', platillo.id);
     console.log('Datos enviados:', platillo);
     
-    this.http.put(`http://127.0.0.1:8001/api/productos/${platillo.id}`, platillo, { headers }).subscribe({
+    this.http.put(`https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/productos/${platillo.id}`, platillo, { headers }).subscribe({
       next: () => {
         platillo.editando = false;
         this.cdRef.detectChanges();
@@ -94,11 +114,16 @@ cambiarPagina(pagina: number) {
     }
 
   eliminarPlatillo(id: number): void {
+    const confirmar = confirm("¿Estás seguro de que deseas eliminar este platillo?");
+  if (!confirmar) {
+    return; // Cancelar si el usuario no confirma
+  }
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
         'Authorization': `Bearer ${token}`
       });
-    this.http.delete(`http://127.0.0.1:8001/api/productos/${id}`, { headers }).subscribe({      next: () => {
+                      
+    this.http.delete(`https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/productos/${id}`, { headers }).subscribe({      next: () => {
          this.obtenerPlatillos();
       },
     error: err => {
@@ -114,7 +139,7 @@ cambiarPagina(pagina: number) {
       'Content-Type': 'application/json'
     };
     console.log('Enviando:', this.nuevoPlatillo);
-    this.http.post('http://127.0.0.1:8001/api/productos', this.nuevoPlatillo, { headers }).subscribe({
+    this.http.post('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/productos', this.nuevoPlatillo, { headers }).subscribe({
       next: (res) => {
         console.log('Platillo creado:', res);
         this.obtenerPlatillos(); 

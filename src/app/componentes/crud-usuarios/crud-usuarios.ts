@@ -7,13 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { HttpHeaders } from '@angular/common/http';
 import { BarraNavegacion } from "../barra-navegacion/barra-navegacion";
 
-  stringIp  : "http://127.0.0.1:8001/api";
 interface Usuario {
   id: number;
   name: string;
   email: string;
-  email_verified_at: string | null;
-  role: string;
+  roles: string[]; // ← CAMBIO AQUÍ
   created_at: string;
   updated_at: string;
   editando?: boolean;
@@ -27,15 +25,29 @@ interface Usuario {
   styleUrl: './crud-usuarios.css'
 })
 export class CrudUsuarios implements OnInit {
-
+  filtroRol: string = '';
+terminoBusqueda: string = '';
   paginaActualUsuarios: number = 1;
 elementosPorPaginaUsuarios: number = 5;
-
+usuariosFiltrados: Usuario[] = [];
 // Getter para obtener los usuarios paginados
 get usuariosPaginados() {
   const inicio = (this.paginaActualUsuarios - 1) * this.elementosPorPaginaUsuarios;
   const fin = inicio + this.elementosPorPaginaUsuarios;
-  return this.usuarios.slice(inicio, fin);
+  return this.usuariosFiltrados.slice(inicio, fin);
+}
+
+
+  filtrarUsuariosPorRol(): void {
+  const termino = this.terminoBusqueda.trim().toLowerCase();
+
+  this.usuariosFiltrados = this.usuarios.filter(usuario => {
+    const coincideNombre = usuario.name.toLowerCase().includes(termino);
+    const coincideRol = this.filtroRol === '' || usuario.roles.includes(this.filtroRol);
+    return coincideNombre && coincideRol;
+  });
+
+  this.paginaActualUsuarios = 1;
 }
 
 // Total de páginas
@@ -68,13 +80,18 @@ cambiarPaginaUsuarios(pagina: number) {
     this.obtenerUsuarios();
   }
 
+filtrarUsuarios(): void {
+  this.filtrarUsuariosPorRol();
+}
   obtenerUsuarios(): void {
   const token = localStorage.getItem('token');
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-  this.http.get<any>('stringIp/', { headers }) 
+  this.http.get<any>('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/usuarios', { headers }) 
       .subscribe({
         next: (response) => {
+          this.usuarios = response.data.map((u: Usuario) => ({ ...u, editando: false }));
+          this.usuariosFiltrados = [...this.usuarios];  // ← llena lista filtrada
           this.usuarios = response.data.map((u: Usuario) => ({ ...u, editando: false }));
           this.cdRef.detectChanges();
         },
@@ -84,6 +101,7 @@ cambiarPaginaUsuarios(pagina: number) {
       });
     }
 
+  
   crearEmpleado() {
   const token = localStorage.getItem('token');
 
@@ -99,7 +117,7 @@ cambiarPaginaUsuarios(pagina: number) {
     password: this.nuevoEmpleado.password
   };
 
-  this.http.post<any>('stringIp/api/usuarios/', empleadoData, { headers })
+  this.http.post<any>('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/usuarios/', empleadoData, { headers })
     .subscribe({
       next: response => {
         console.log('Empleado creado:', response);
@@ -123,30 +141,57 @@ cambiarPaginaUsuarios(pagina: number) {
   }
 
   guardarUsuario(usuario: any) {
-    const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  this.http.put(`stringIp/usuarios/${usuario.id}`, usuario, { headers })      .subscribe({
-        next: () => {
-          usuario.editando = false;
-          delete this.copiaUsuarios[usuario.id];
-           this.cdRef.detectChanges(); 
-        },
-        error: err => console.error('Error al guardar usuario:', err)
-      });
+  const datosActualizar = {
+    name: usuario.name,
+    email: usuario.email,
+    role: usuario.roles[0]  // verifica que aquí el nombre del campo sea el que tu backend espera
+  };
+  this.http.put(`https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/usuarios/${usuario.id}`, datosActualizar, { headers })
+    .subscribe({
+      next: () => {
+        usuario.editando = false;
+        delete this.copiaUsuarios[usuario.id];
+        this.cdRef.detectChanges(); 
+      },
+      error: err => console.error('Error al guardar usuario:', err)
+    });
   }
 
   eliminarUsuario(id: number) {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  const usuarioSeleccionado = this.usuarios.find(u => u.id === id);
 
-    this.http.delete(`http://127.0.0.1:8001/api/usuarios/${id}`, { headers })
-      .subscribe({
-        next: () => {
-          this.usuarios = this.usuarios.filter(u => u.id !== id);
-          this.cdRef.detectChanges();
-        },
-          error: err => console.error('Error al eliminar usuario:', err)
-      });
+  if (!usuarioSeleccionado) {
+    alert("Usuario no encontrado.");
+    return;
   }
+
+  // Verificamos si es admin
+  if (usuarioSeleccionado.roles.includes('admin')) {
+  alert("No tienes permisos para eliminar a un usuario administrador.");
+  return;
+}
+
+  // Confirmación antes de eliminar
+  const confirmacion = confirm(`¿Estás seguro de que deseas eliminar al usuario "${usuarioSeleccionado.name}"?`);
+  if (!confirmacion) {
+    return;
+  }
+
+  // Si pasa las validaciones, proceder a eliminar
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+  this.http.delete(`https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/usuarios/${id}`, { headers })
+    .subscribe({
+      next: () => {
+        this.usuarios = this.usuarios.filter(u => u.id !== id);
+        this.cdRef.detectChanges();
+      },
+      error: err => console.error('Error al eliminar usuario:', err)
+    });
+}
+
 
 }

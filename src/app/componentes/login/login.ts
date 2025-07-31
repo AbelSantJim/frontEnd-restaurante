@@ -29,9 +29,8 @@ export class Login {
         password: this.password
       };
 
-      this.http.post<any>('http://127.0.0.1:8001/api/login/', payload).subscribe({
+this.http.post<any>('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/login', payload).subscribe({
         next: (res) => {
-          
           localStorage.setItem('token', res.token);
           localStorage.setItem('nombre', res.user_info.name);
           localStorage.setItem('rol', res.user_info.roles[0]);

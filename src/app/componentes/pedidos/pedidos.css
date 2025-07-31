@@ -12,6 +12,12 @@
   z-index: 10;
   box-sizing: border-box;
 }
+.no-hover:hover {
+  background-color: #0B5ED7 !important;
+  border-color: #0B5ED7 !important;
+  color: white !important;
+}
+
 .banner-container {
   position: relative;
   width: 100%;

@@ -17,8 +17,9 @@
               id="numero"
               placeholder="XXXX XXXX XXXX XXXX"
               maxlength="19"
+              name="numeroTarjeta"
+              [(ngModel)]="numeroTarjeta"
               (input)="formatearTarjeta($event)"
-              [value]="numeroTarjeta"
               required
             />
           </div>
@@ -43,58 +44,65 @@
           <!-- CVV -->
           <div class="mb-3">
             <label for="cvv" class="form-label">CVV</label>
-            <input type="password" class="form-control" id="cvv" maxlength="4" placeholder="CVV" required />
+            <input type="password" class="form-control" id="cvv" name="cvv" maxlength="3" [(ngModel)]="cvv" placeholder="CVV" required />
           </div>
 
           <!-- Fecha de expiración -->
           <div class="mb-3">
             <label class="form-label">Fecha de expiración</label>
             <div class="d-flex flex-wrap gap-2">
-              <select class="form-select w-50" id="mes" required>
+              <select class="form-select w-50"  name="mesExpiracion" [(ngModel)]="mesExpiracion"  id="mes" required>
                 <option value="" disabled selected>Mes</option>
                 <option *ngFor="let m of meses" [value]="m.value">{{ m.name }}</option>
               </select>
 
-              <select class="form-select w-50" id="anio" required>
+              <select class="form-select w-50"  name="anioExpiracion" [(ngModel)]="anioExpiracion"  id="anio" required>
                 <option value="" disabled selected>Año</option>
                 <option *ngFor="let a of anios" [value]="a">{{ a }}</option>
               </select>
             </div>
           </div>
 
-          <div class="mb-3">
+         <!-- Opción de envío -->
+<div class="mb-3">
   <label class="form-label">¿Cómo desea recibir su ticket?</label>
 
   <div class="form-check">
+  <input type="radio" name="metodoEnvio" value="email" [(ngModel)]="metodoEnvio"
+  [disabled]="!formularioValido()" />
+  <label class="form-check-label" for="opcion2">
+    Enviar por correo
+  </label>
+</div>
+
+  <!-- Input de correo que aparece solo si se elige "correo" -->
+  <div class="mt-2" *ngIf="metodoEnvio === 'correo'">
+    <label for="emailCliente" class="form-label">Correo del cliente</label>
     <input
-      class="form-check-input"
-      type="radio"
-      name="metodo"
-      id="correo"
-      [(ngModel)]="metodoEnvio"
-      value="correo"
+      type="email"
+      id="emailCliente"
+      class="form-control"
+      name="correoCliente"
+      [(ngModel)]="correoCliente"
+      placeholder="ejemplo@correo.com"
+      required
     />
-    <label class="form-check-label" for="correo">Enviar al correo</label>
   </div>
 
   <div class="form-check">
-    <input
-      class="form-check-input"
-      type="radio"
-      name="metodo"
-      id="imprimir"
-      [(ngModel)]="metodoEnvio"
-      value="imprimir"
-    />
-    <label class="form-check-label" for="impresion">Imprimir</label>
-  </div>
+  <input type="radio" name="metodoEnvio" value="imprimir" [(ngModel)]="metodoEnvio"
+  [disabled]="!formularioValido()"   />
+  <label class="form-check-label" for="opcion1">
+    Descargar PDF
+  </label>
 </div>
+</div>
+
 
           <!-- Botón de pago -->
           <button
   type="submit"
-  class="btn btn-primary"
-  [disabled]="!metodoEnvio"
+  class="btn btn-primary" [disabled]="!metodoEnvio"
 >
   Pagar
 </button>

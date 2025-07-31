@@ -9,6 +9,27 @@
 <section class="bienvenida-container ">
   <div class="banner-container bg-dark p-4 rounded shadow">
     <h2 class="text-white mb-4">Administración de Órdenes</h2>
+    <div class="radio-group">
+  <label class="radio-option">
+    <input type="radio" name="filtroEstado" [(ngModel)]="filtroEstado" value="pendiente" (change)="filtrarPedidos()" />
+    Mostrar pendientes
+  </label>
+
+  <label class="radio-option">
+    <input type="radio" name="filtroEstado" [(ngModel)]="filtroEstado" value="entregado" (change)="filtrarPedidos()" />
+    Mostrar entregados
+  </label>
+
+  <label class="radio-option">
+    <input type="radio" name="filtroEstado" [(ngModel)]="filtroEstado" value="pagado" (change)="filtrarPedidos()" />
+    Mostrar pagados
+  </label>
+
+  <label class="radio-option">
+    <input type="radio" name="filtroEstado" [(ngModel)]="filtroEstado" value="" (change)="filtrarPedidos()" />
+    Mostrar todos
+  </label>
+</div>
     <div class="table-responsive">
       <table class="table table-striped table-hover table-bordered bg-white rounded">
         <thead class="table-dark text-center">
@@ -43,18 +64,19 @@
             <td>{{ pedido.created_at | date: 'short' }}</td>
             <td class="text-center">
   <button 
-    class="btn"
+    class="btn me-2"
     [ngClass]="{
-      'btn-warning': pedido.estado === 'pendiente',
-      'btn-success': pedido.estado === 'entregado',
-      'btn-danger': pedido.estado === 'pagado'
+       'btn-warning': pedido.estado === 'pendiente',
+  'btn-success': pedido.estado === 'entregado',
+  'btn-danger': pedido.estado === 'pagado',
+  'btn-secondary': pedido.estado === 'cancelado'
     }"
     [disabled]="pedido.estado === 'pagado' && rol !== 'admin'"
     (click)="accionPedido(pedido)">
     {{
       pedido.estado === 'pendiente' ? 'Entregar' :
       pedido.estado === 'entregado' ? 'Cobrar' :
-      pedido.estado === 'pagado' ? 'Cancelar' : ''
+      pedido.estado === 'pagado' ? 'Cancelado' : ''
     }}
   </button>
 </td>

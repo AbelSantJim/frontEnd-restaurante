@@ -57,7 +57,7 @@ obtenerMesas(): void {
   const token = localStorage.getItem('token'); // o de donde guardes el token
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-  this.http.get<any[]>('http://127.0.0.1:8001/api/mesas/', { headers })
+  this.http.get<any[]>('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/mesas', { headers })
     .subscribe({
       next: datos => {
         this.mesas = datos;
@@ -69,7 +69,7 @@ obtenerMesas(): void {
 }
 
   obtenerPlatillos(): void {
-  this.http.get<any[]>('http://127.0.0.1:8001/api/API/productos/')
+  this.http.get<any[]>('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/API/productos')
     .subscribe({
       next: datos => {
         this.platillos = datos.map(p => ({ ...p, editando: false }));
@@ -174,7 +174,7 @@ enviarPedido() {
     'Authorization': `Bearer ${token}`
   });
 
-  this.http.post('http://127.0.0.1:8001/api/pedidos/', pedido, { headers })
+  this.http.post('https://backend-restaurante-8d68ca64ed92.herokuapp.com/api/pedidos', pedido, { headers })
     .subscribe({
       next: (response) => {
         console.log('Pedido enviado con éxito:', response);
